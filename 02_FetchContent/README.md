@@ -2,15 +2,25 @@
 ## 1 配置化管理第三方库 —— fetchcontent
 ### 1.1 使用理由
 C++使用第三方库有几个方法：
-1. git克隆下来编译
-2. 包管理帮你克隆下来编译
-3. 编译好静态库或动态库文件直接使用
+1. git克隆下来**手动**配置编译：git submodule
+2. 编译好静态库或动态库文件手动导入
+3. 包管**自动**下载源码编译：cmake fetchcontent、包管理(conan、vcpkg)
 
-项目管理最大问题之一就是版本管理，方法1对于版本管理要手动操作，方法2可以自动化配置，方法3多人合作中很容易出问题。
+一般项目都是多人协作，这就引出一个大问题：**库的版本管理**
 
-**个人观点**：cmake源码版本 > 包管理（conan、vcpkg）> git submodule
+方法1、2需要手动操作，人多很容易出错，方法3可以自动化引入，只需配置好版本号即可。
 
-### 1.2 fetchcontent例子
+**个人观点**： 包管理(conan、vcpkg) ≈ cmake fetchcontent源码 > git submodule
+
+- cmake fetchcontent 可以很方便的配置编译选项。
+
+- 包管理是基于构建工具管理包，比如vcpkg + cmake、xrepo + xmake。
+
+### 1.2 cmake fetchcontent
+cmake fetchcontent 相比于包管理，可以很方便的配置编译选项。
+
+#### 1.2.1 使用例子
+
 ```cmake
 ...
 # 类似 #include
@@ -42,17 +52,19 @@ option(SPDLOG_INSTALL "Generate the install target" OFF)
 option(SPDLOG_BUILD_SHARED "Build shared library" ON)
 
 # 实际下载 + add_subdirectory
-FetchContent_MakeAvailable(glfw)
+FetchContent_MakeAvailable(glfw spdlog)
 ...
 ```
 
-在 `main.cpp` 里添加 `#include "spdlog/spdlog.h"`，这里把库都设置成了**动态库**，在main里随便使用一下spdlog的功能：`spdlog::info("Welcome to spdlog!");`。
+在 `main.cpp` 里添加 `#include "spdlog/spdlog.h"`，这里把库都设置成了**动态库**，在main里随便使用一下spdlog的功能，确保正确链接：`spdlog::info("Welcome to spdlog!");`。
 
-## 2 install
+#### 1.2.2 install
+
+
 本质就是把一些东西复制到一个地方里。
 
 那有什么用呢？
-- 安装到系统里
+- 安装到系统里，供 cmake `find_package` 使用
 - 这里为了换个环境测试使用情况
 
 ```cmake
@@ -68,7 +80,7 @@ install(
 
 这时使用这个选项编译，运行，会提示缺少 **glfw.dll** 和 **spdlog.dll**
 
-回过头可以见到上面的配置，找到并修改为下面两个选项：
+回过头可以见到上面的配置，第三方库有install配置（没有的话要自己写），找到并修改为下面两个选项：
 - option(SPDLOG_BUILD_SHARED "Build shared library" ON)
 - option(GLFW_INSTALL "Generate installation target" ON)
 

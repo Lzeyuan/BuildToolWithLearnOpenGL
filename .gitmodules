@@ -1,3 +1,0 @@
-[submodule "01_HelloWindow/3rd/glfw"]
-	path = 01_HelloWindow/3rd/glfw
-	url = https://github.com/glfw/glfw.git

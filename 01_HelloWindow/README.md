@@ -1,6 +1,6 @@
 # 你好窗口
 环境：
-- vs2022
+- win11 + vs2022
 - cmake 3.29
 ## 1 测试环境
 先确保环境正确。
@@ -60,19 +60,45 @@ add_subdirectory(3rd/glad)
 
 target_link_libraries(
 	01_HelloWindow
+	PRIVTAE
 	glad
 )
 ...
+
 ```
 `add_library` 类型有三：
-| STATIC | SHARED | INTERFACE |
+| STATIC(default) | SHARED | INTERFACE |
 |:-------:|:-------:|:-------:|
 | 静态库 | 动态库 | 不编译，仅暴露配置 |
 
 `target_*` 开头的函数类型有三：
-| PUBLIC | PRIVTAE | INTERFACE |
+| PUBLIC | PRIVTAE(default) | INTERFACE |
 |:-------:|:-------:|:-------:|
 | 本项目和引用该项目可用 | 仅本项目可用 | 仅引用该项目可用 |
+
+- 只有链接库、仅头文件库：
+```cmake
+# 3rd/glad/CMakeLists.txt
+cmake_minimum_required (VERSION 3.8)
+
+add_library (
+	header_only
+	INTERFACE
+)
+
+target_include_directories(
+	header_only			
+	INTERFACE
+	include
+)
+
+# 仅头文件不需要
+target_link_libraries(
+	header_only
+	INTERFACE
+	glad
+)
+```
 
 
 ### 2.2 添加glfw
@@ -100,6 +126,9 @@ target_link_libraries(
 )
 ...
 ```
+
+# 3 运行
+
 复制[教程代码](https://learnopengl.com/code_viewer_gh.php?code=src/1.getting_started/1.2.hello_window_clear/hello_window_clear.cpp)到 `main.cpp`
 
 这个时候可以试一下编译运行了。

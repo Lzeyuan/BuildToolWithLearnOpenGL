@@ -1,6 +1,8 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
-project ("02_DynamicHelloWindow")
+project ("02_FetchContent")
+# 设置 C++ 编译器选项以启用 UTF-8 编码
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
 
 add_executable (
     ${PROJECT_NAME} 
@@ -34,6 +36,10 @@ option(SPDLOG_INSTALL "Generate the install target" ON)
 option(SPDLOG_BUILD_SHARED "Build shared library" ON)
 FetchContent_MakeAvailable(glfw spdlog)
 
+target_include_directories(
+    ${PROJECT_NAME} 
+    PRIVATE
+)
 
 target_link_libraries(
     ${PROJECT_NAME} 
@@ -41,7 +47,7 @@ target_link_libraries(
     glad
     glfw
     opengl32
-    spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>
+    spdlog::spdlog
 )
 
 install(
