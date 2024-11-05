@@ -1,4 +1,4 @@
-# 你好窗口
+# 包管理 1
 ## 1 配置化管理第三方库 —— fetchcontent
 ### 1.1 使用理由
 C++使用第三方库有几个方法：
@@ -88,7 +88,10 @@ install(
 
 一些库没有写install，就只能自己去修改了，这里复制spdlog的处理：
 ```cmake
-install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
+install(
+    DIRECTORY include/ 
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" 
+    PATTERN "fmt/bundled" EXCLUDE)
 install(
     TARGETS spdlog spdlog_header_only
     EXPORT spdlog
