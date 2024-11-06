@@ -1,0 +1,16 @@
+﻿{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "x64-base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "X_VCPKG_APPLOCAL_DEPS_INSTALL": "ON"
+      }
+    }
+  ]
+}
