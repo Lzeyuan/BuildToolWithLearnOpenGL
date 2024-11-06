@@ -1,8 +1,17 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
 project ("02_FetchContent")
-# 设置 C++ 编译器选项以启用 UTF-8 编码
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
+if (MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    # set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+if (UNIX)
+	set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Whether to export compile commands for the project")
+endif()
+set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
+set(CMAKE_CXX_STANDARD_REQUIRED True CACHE BOOL "Whether the C++ standard is required")
+set(CMAKE_CXX_EXTENSIONS False CACHE BOOL "Whether to use compiler-specific C++ extensions")
 
 add_executable (
     ${PROJECT_NAME} 
@@ -11,7 +20,8 @@ add_executable (
 
 add_subdirectory(3rd/glad)
 
-include(fetchcontent)
+# FetchContent必须大写
+include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_BASE_DIR ${PROJECT_SOURCE_DIR}/fetch_content)
 
@@ -46,7 +56,6 @@ target_link_libraries(
     PRIVATE
     glad
     glfw
-    opengl32
     spdlog::spdlog
 )
 

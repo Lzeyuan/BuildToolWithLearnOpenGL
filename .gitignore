@@ -13,3 +13,4 @@ CMakeUserPresets.json
 fetch_content
 out
 .vs
+.vscode

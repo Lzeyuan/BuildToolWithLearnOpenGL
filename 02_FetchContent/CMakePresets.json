@@ -1,0 +1,11 @@
+﻿{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "x64-base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}"
+    }
+  ]
+}
