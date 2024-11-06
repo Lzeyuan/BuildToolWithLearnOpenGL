@@ -5,6 +5,7 @@ if (MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 elseif(UNIX)
 	set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Whether to export compile commands for the project")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" CACHE STRING "Dynamic library find path")
 endif()
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
 set(CMAKE_CXX_STANDARD_REQUIRED True CACHE BOOL "Whether the C++ standard is required")
@@ -57,7 +58,7 @@ target_link_libraries(
     glfw
     spdlog::spdlog
 )
-
+message("INSTALL_RPATH" ${CMAKE_INSTALL_PREFIX})
 install(
     TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
