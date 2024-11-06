@@ -24,15 +24,20 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
+  spdlog::set_level(spdlog::level::debug);
+
   // glfw window creation
   // --------------------
   GLFWwindow* window =
-      glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
   if (window == NULL) {
     std::cout << "Failed to create GLFW window" << std::endl;
     glfwTerminate();
     return -1;
   }
+
+  spdlog::debug("Create window.");
+
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -42,7 +47,7 @@ int main() {
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
-  spdlog::info("Welcome to spdlog!");
+  spdlog::debug("Load glad.");
   // render loop
   // -----------
   while (!glfwWindowShouldClose(window)) {
@@ -65,6 +70,7 @@ int main() {
   // glfw: terminate, clearing all previously allocated GLFW resources.
   // ------------------------------------------------------------------
   glfwTerminate();
+  spdlog::debug("Close window.");
   return 0;
 }
 

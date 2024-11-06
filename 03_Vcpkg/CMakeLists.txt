@@ -1,7 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.15)
 
 if (MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
 	set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 	set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "Vcpkg target triplet")
 elseif(UNIX)
@@ -13,8 +12,8 @@ set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
 set(CMAKE_CXX_STANDARD_REQUIRED True CACHE BOOL "Whether the C++ standard is required")
 set(CMAKE_CXX_EXTENSIONS False CACHE BOOL "Whether to use compiler-specific C++ extensions")
 
-project ("04_vcpkg")
-
+project ("03_vcpkg")
+message("CMAKE_TOOLCHAIN_FILE = " ${CMAKE_TOOLCHAIN_FILE})
 find_package(glfw3 CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 
@@ -24,7 +23,7 @@ add_subdirectory(3rd/glad)
 add_executable (
 	${PROJECT_NAME}
 	src/main.cpp
-)
+  )
 
 target_link_libraries(
 	${PROJECT_NAME}

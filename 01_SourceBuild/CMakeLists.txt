@@ -1,10 +1,9 @@
-﻿cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.15)
 
 if (MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-endif()
-if (UNIX)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+elseif (UNIX)
 	set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Whether to export compile commands for the project")
 endif()
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
@@ -14,7 +13,7 @@ set(CMAKE_CXX_EXTENSIONS False CACHE BOOL "Whether to use compiler-specific C++ 
 project ("01_SourceBuild")
 
 add_executable (
-	01_HelloWindow 
+	${PROJECT_NAME} 
 	src/main.cpp
 )
 
@@ -27,7 +26,7 @@ option(GLFW_INSTALL "Generate installation target" OFF)
 add_subdirectory(3rd/glfw-3.4)
 
 target_link_libraries(
-	01_HelloWindow
+	${PROJECT_NAME}
 	PRIVATE
 	glad
 	glfw
