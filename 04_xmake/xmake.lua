@@ -4,13 +4,15 @@ if is_plat("windows") then
   set_runtimes("MD")
   set_toolchains("msvc")
   add_cxxflags("cl::/utf-8")
-end
+  add_requires("glfw 3.4", {configs = {shared = true}})
+  add_requires("spdlog 1.14.1")
+elseif is_plat("linux") then
+  add_requires("glfw 3.4")
+  add_requires("spdlog 1.14.1")
+end 
 
 set_languages("c++17")
 set_installdir("$(buildir)/install/$(arch)-$(mode)")
-
-add_requires("glfw 3.4")
-add_requires("spdlog 1.14.1")
 
 includes("3rd/*/xmake.lua")
 
