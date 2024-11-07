@@ -1,10 +1,11 @@
 add_rules("mode.debug", "mode.release")
 
-set_runtimes("MD")
-set_toolchains("msvc")
-set_languages("c++17")
-add_cxxflags("cl::/utf-8")
-
+if is_plat("windows") then
+  set_runtimes("MD")
+  set_toolchains("msvc")
+  set_languages("c++17")
+  add_cxxflags("cl::/utf-8")
+end
 
 set_installdir("$(buildir)/install/$(arch)-$(mode)")
 
