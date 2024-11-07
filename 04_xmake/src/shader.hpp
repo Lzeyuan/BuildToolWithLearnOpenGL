@@ -19,6 +19,7 @@ class Shader {
     vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
+      printf("vertexPath = %s, fragmentPath = %s\n", vertexPath, fragmentPath);
       // open files
       vShaderFile.open(vertexPath);
       fShaderFile.open(fragmentPath);
