@@ -1,21 +1,28 @@
 # LearnCMakeWithOpenGL
 通过搭建[LearnOpenGL](https://learnopengl-cn.github.io/)环境，学习C/C++Build。
 
+# 推荐使用xmake!
+
+
 # CMake
 ## 模板
 ```cmake
 # 必须
 cmake_minimum_required (VERSION 3.19)
 
-# 判断平台
-if (CMAKE_SYSTEM_NAME MATCHES "Windows")
-	set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "Vcpkg target triplet")
-elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
-	set(VCPKG_TARGET_TRIPLET "x64-linux" CACHE STRING "Vcpkg target triplet")
-endif()
+# 必须在peroject前才生效，最好写在CMakeUserPreset.json
+# set(VCPKG_TARGET_TRIPLET "x64-linux" CACHE STRING "Vcpkg target triplet")
+# set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "Vcpkg target triplet")
+# set(VCPKG_FIXUP_ELF_RPATH TRUE CACHE BOOL "Vcpkg runpath ")
+# set(X_VCPKG_APPLOCAL_DEPS_INSTALL TRUE CACHE BOOL "Vcpkg runpath ")
 
 # 必须，这个前后set某些变量有顺序要求
 project ("03_vcpkg")
+
+# 判断平台，project后生效
+if (CMAKE_SYSTEM_NAME MATCHES "Windows")
+elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
+endif()
 
 # C++版本
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use")
@@ -77,11 +84,11 @@ Window默认会从程序当前目录开始查找，Linux从RPATH开始。
 ## linux使用动态库开发有点麻烦：
 **问题场景**：我想 `cmake --install` 测试实际运行情况。Windows因为从程序当前目录开始查找，所以测试很方便。
 
-**Windows方便点**
+### Windows方便点
 
 开启 `X_VCPKG_APPLOCAL_DEPS_INSTALL` dll和exe一起安装。
 
-**但是Linux就不好说了**：
+### 但是Linux就不好说了
 
 要为Vcpkg管理的每个包设置 `-Wl,-rpath,/path/to/your/library`
 
@@ -98,8 +105,10 @@ set(VCPKG_FIXUP_ELF_RPATH TRUE CACHE BOOL "Vcpkg runpath ")
 
 但是运行`cmake --install`安装会把设置好的程序`RPATH` **清空！！**。
 
-**解决方法**
+### 解决方法
 
-和windows一样使用 `X_VCPKG_APPLOCAL_DEPS_INSTALL` 把所有so复制到bin目录
+不能和windows一样使用 `X_VCPKG_APPLOCAL_DEPS_INSTALL` 自动复制动态库。
 
-临时设置 `export LD_LIBRARY_PATH=/path/to/your/library:$LD_LIBRARY_PATH`，运行即可。
+所以要手动把所有so复制到 `/path/to/your/library` 目录。
+
+然后执行指令：`LD_LIBRARY_PATH=/path/to/your/library ./YouAPP`。
