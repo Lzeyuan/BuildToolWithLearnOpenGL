@@ -42,11 +42,6 @@ option(SPDLOG_INSTALL "Generate the install target" ON)
 option(SPDLOG_BUILD_SHARED "Build shared library" ON)
 FetchContent_MakeAvailable(glfw spdlog)
 
-target_include_directories(
-    ${PROJECT_NAME} 
-    PRIVATE
-)
-
 target_link_libraries(
     ${PROJECT_NAME} 
     PRIVATE
@@ -54,7 +49,7 @@ target_link_libraries(
     glfw
     spdlog::spdlog
 )
-message("INSTALL_RPATH" ${CMAKE_INSTALL_PREFIX})
+message("INSTALL_RPATH = " ${CMAKE_INSTALL_PREFIX})
 install(
     TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin

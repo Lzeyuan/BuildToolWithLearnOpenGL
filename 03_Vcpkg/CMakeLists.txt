@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.15)
+﻿cmake_minimum_required (VERSION 3.19)
 
 project ("03_vcpkg")
 
@@ -18,7 +18,7 @@ add_subdirectory(3rd/glad)
 add_executable (
 	${PROJECT_NAME}
 	src/main.cpp
-  )
+)
 
 target_link_libraries(
 	${PROJECT_NAME}
