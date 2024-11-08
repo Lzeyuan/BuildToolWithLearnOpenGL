@@ -6,7 +6,7 @@ if is_plat("windows") then
   add_cxxflags("cl::/utf-8")
   add_requires("glfw 3.4", {configs = {shared = true}})
   add_requires("spdlog 1.14.1")
-elseif is_plat("linux") then
+else 
   add_requires("glfw 3.4")
   add_requires("spdlog 1.14.1")
 end 
