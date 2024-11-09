@@ -51,6 +51,21 @@ target_link_libraries(
     spdlog::spdlog
 )
 message("INSTALL_RPATH = " ${CMAKE_INSTALL_PREFIX})
+
+# start 为了复制DLL到执行文件的生成目录
+add_custom_command(TARGET ${PROJECT_NAME} 
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:glfw> "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMENT "Copy dll file to ${CMAKE_CURRENT_BINARY_DIR} directory" VERBATIM
+)
+
+add_custom_command(TARGET ${PROJECT_NAME} 
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:spdlog> "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMENT "Copy dll file to ${CMAKE_CURRENT_BINARY_DIR} directory" VERBATIM
+)
+# end
+
 install(
     TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin

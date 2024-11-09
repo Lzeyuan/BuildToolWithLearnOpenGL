@@ -1,10 +1,64 @@
 # LearnCMakeWithOpenGL
 通过搭建[LearnOpenGL](https://learnopengl-cn.github.io/)环境，学习C/C++Build。
 
-# 推荐使用xmake!
+![build-tools-layer](note/images/build-tools-layer.png)
 
+# 推荐使用xmake
+使用简单，隐藏了一些细节，开源项目可能断更。
+
+## 模板
+```lua
+add_rules("mode.debug", "mode.release")
+
+if is_plat("windows") then
+	set_runtimes("MD")
+	set_toolchains("msvc")
+	add_cxxflags("cl::/utf-8")
+	add_requires("glfw 3.4", {configs = {shared = true}})
+	add_requires("spdlog 1.14.1")
+else 
+	add_requires("glfw 3.4")
+	add_requires("spdlog 1.14.1")
+end 
+
+set_languages("c++17")
+set_installdir("$(buildir)/install/$(arch)-$(mode)")
+
+includes("3rd/*/xmake.lua")
+
+target("04_xmake")
+    set_kind("binary")
+	-- 添加第三方库
+    add_packages("glfw","spdlog")
+	-- 源码添加第三方库
+    add_deps("glad","glm", "stb_image")
+
+    add_files("src/*.cpp")
+    add_includedirs("src")
+	
+	-- 复制资源文件
+    add_installfiles("(resources/images/*)", {prefixdir = "bin"})
+    add_installfiles("(resources/shaders/*)", {prefixdir = "bin"})
+    after_build(function (target)
+      print("before_build")
+      print("copying resource " .." to " .. target:targetdir())
+      os.cp(path.join("$(scriptdir)", "resources"), target:targetdir())
+    end)
+
+-- header only
+target("glm")
+  set_kind("headeronly")
+  add_includedirs("include", { public = true })
+```
+
+## xmake run
+会自动加载所有包的环境，再去运行程序。
+
+也就说直接运行程序可能找不到动态库，但是xmake run正常。
 
 # CMake
+已成 C++ build tool 标准，每个项目必备。
+
 ## 模板
 ```cmake
 # 必须
@@ -68,10 +122,26 @@ install(
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 ```
+
+## 第三方库
+和 C++ 类似的多种实现方式，就是没有最佳实践。
+
+| |`add_subdirectory` | `FetchContent` | 包管理 |
+|-------|-------|-------|-------|
+| 自动下载源码 | × | √ | √ |
+| 手动配置 | √ | find_package | find_package|
+| 编译产物缓存 | × | × | √ |
+
+- 自动下载源码：自动配置每次都要网络查询更新
+- 手动配置：包管理对于选项配置不灵活
+- 编译产物缓存：cmake项目通常会删除build导致重新编译
+
 ## 缓存
 - set(... CACHE ...)
 - option
 - find_package、find_program、find_library、find_file
+
+很多配置不生效问题，多看看生成目录里的 `CMakeCache.txt` 查看是否已经修改了。
 
 ## 功能版本限制
 - `include(FetchContent)`：CMake 3.11
@@ -112,3 +182,29 @@ set(VCPKG_FIXUP_ELF_RPATH TRUE CACHE BOOL "Vcpkg runpath ")
 所以要手动把所有so复制到 `/path/to/your/library` 目录。
 
 然后执行指令：`LD_LIBRARY_PATH=/path/to/your/library ./YouAPP`。
+
+## 默认不复制动态库
+### 命令复制
+```cmake
+...
+add_custom_command(TARGET ${PROJECT_NAME} 
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:spdlog> "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMENT "Copy dll file to ${CMAKE_CURRENT_BINARY_DIR} directory" VERBATIM
+)
+...
+```
+
+### 安装复制
+```cmake
+...
+install(
+    TARGETS ${PROJECT_NAME}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+...
+```
+
+### vcpkg
+自动复制到执行文件生成目录。
