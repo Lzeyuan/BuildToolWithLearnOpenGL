@@ -4,6 +4,9 @@
 - cmake 3.29
 ## 1 测试环境
 先确保环境正确。
+
+本项目 `CMakeUserPresets.json` 没有忽略，供以参考。
+
 ```cpp
 #include <cstdio>
 
