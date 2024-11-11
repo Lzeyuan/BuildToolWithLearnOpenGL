@@ -1,0 +1,16 @@
+{
+  "dependencies": [
+    "glfw3",
+    "spdlog"
+  ],
+  "overrides": [
+    {
+      "name": "glfw3",
+      "version": "3.4"
+    },
+    {
+      "name": "glfw",
+      "version": "1.14.1"
+    }
+  ]
+}
