@@ -9,7 +9,9 @@
 #include <optional>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
+
 
 // glad must be before GLFW
 // clang-format off
