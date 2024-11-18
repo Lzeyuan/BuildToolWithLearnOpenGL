@@ -4,7 +4,6 @@
 #include "model.hpp"
 #include "shader.hpp"
 
-
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
@@ -15,7 +14,7 @@ const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
 // camera
-Camera camera(glm::vec3(0.0f, 10.0f, 10.0f));
+Camera camera(glm::vec3(0.0f, 15.0f, 10.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -68,10 +67,63 @@ int main() {
   // -----------------------------
   glEnable(GL_DEPTH_TEST);
 
+  float lightCubeVertices[] = {
+      -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f, -0.5f,
+      0.0f,  0.0f,  -1.0f, 0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
+      0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f, -0.5f, 0.5f,  -0.5f,
+      0.0f,  0.0f,  -1.0f, -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f,
+
+      -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,  0.5f,  -0.5f, 0.5f,
+      0.0f,  0.0f,  1.0f,  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+      0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  -0.5f, 0.5f,  0.5f,
+      0.0f,  0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  1.0f,
+
+      -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,  -0.5f, 0.5f,  -0.5f,
+      -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,
+      -0.5f, -0.5f, -0.5f, -1.0f, 0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,
+      -1.0f, 0.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  -1.0f, 0.0f,  0.0f,
+
+      0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.5f,  0.5f,  -0.5f,
+      1.0f,  0.0f,  0.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,
+      0.5f,  -0.5f, -0.5f, 1.0f,  0.0f,  0.0f,  0.5f,  -0.5f, 0.5f,
+      1.0f,  0.0f,  0.0f,  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+      -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f, -0.5f,
+      0.0f,  -1.0f, 0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,
+      0.5f,  -0.5f, 0.5f,  0.0f,  -1.0f, 0.0f,  -0.5f, -0.5f, 0.5f,
+      0.0f,  -1.0f, 0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  -1.0f, 0.0f,
+
+      -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  -0.5f,
+      0.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+      0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,
+      0.0f,  1.0f,  0.0f,  -0.5f, 0.5f,  -0.5f, 0.0f,  1.0f,  0.0f};
+
+  // positions of the point lights
+  glm::vec3 pointLightPositions[] = {
+      glm::vec3(-3.f, 15.f, 3.0f), glm::vec3(2.3f, -3.3f, -4.0f),
+      glm::vec3(-4.0f, 2.0f, -12.0f), glm::vec3(0.0f, 0.0f, -3.0f)};
+
+  unsigned int lightCubeVAO;
+  unsigned int VBO, cubeVAO;
+  glGenVertexArrays(1, &lightCubeVAO);
+  glBindVertexArray(lightCubeVAO);
+
+  glGenBuffers(1, &VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(lightCubeVertices), lightCubeVertices,
+               GL_STATIC_DRAW);
+
+  // note that we update the lamp's position attribute's stride to reflect the
+  // updated buffer data
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+  glEnableVertexAttribArray(0);
+
   // build and compile shaders
   // -------------------------
   Shader ourShader("resources/shaders/model_loading.vs",
                    "resources/shaders/model_loading.fs");
+  Shader lightCubeShader("resources/shaders/light_cube.vs",
+                         "resources/shaders/light_cube.fs");
 
   // load models
   // -----------
@@ -95,11 +147,26 @@ int main() {
 
     // render
     // ------
-    glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+    glClearColor(0.f, 0.f, 0.f, 0.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // don't forget to enable shader before setting uniforms
     ourShader.use();
+    ourShader.setVec3("viewPos", camera.Position);
+    ourShader.setFloat("material.shininess", 32.0f);
+    // directional light
+    ourShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+    ourShader.setVec3("dirLight.ambient", 0.5f, 0.5f, 0.5f);
+    ourShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+    ourShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+    // point light 1
+    ourShader.setVec3("pointLights[0].position", pointLightPositions[0]);
+    ourShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+    ourShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+    ourShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+    ourShader.setFloat("pointLights[0].constant", 1.0f);
+    ourShader.setFloat("pointLights[0].linear", 0.045f);
+    ourShader.setFloat("pointLights[0].quadratic", 0.0075f);
 
     // view/projection transformations
     glm::mat4 projection =
@@ -111,17 +178,25 @@ int main() {
 
     // render the loaded model
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(
-        model,
-        glm::vec3(
-            0.0f, 0.0f,
-            0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(
-        model,
-        glm::vec3(1.0f, 1.0f,
-                  1.0f)); // it's a bit too big for our scene, so scale it down
+    // translate it down so it's at the center of the scene
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    // it's a bit too big for our scene, so scale it down
+    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
     ourShader.setMat4("model", model);
     ourModel.Draw(ourShader);
+
+    // also draw the lamp object(s)
+    lightCubeShader.use();
+    lightCubeShader.setMat4("projection", projection);
+    lightCubeShader.setMat4("view", view);
+
+    // we now draw as many light bulbs as we have point lights.
+    glBindVertexArray(lightCubeVAO);
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, pointLightPositions[0]);
+    model = glm::scale(model, glm::vec3(0.2f));
+    lightCubeShader.setMat4("model", model);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved
     // etc.)
@@ -129,6 +204,7 @@ int main() {
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
+  glDeleteVertexArrays(1, &lightCubeVAO);
 
   // glfw: terminate, clearing all previously allocated GLFW resources.
   // ------------------------------------------------------------------
