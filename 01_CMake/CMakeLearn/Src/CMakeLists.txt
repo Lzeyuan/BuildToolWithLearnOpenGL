@@ -1,0 +1,8 @@
+add_subdirectory (00_QuickStart)
+add_subdirectory (01_HelloWindow)
+add_subdirectory (02_Triangle)
+add_subdirectory (03_Textures)
+add_subdirectory (04_Camera)
+add_subdirectory (05_Light)
+add_subdirectory (06_LightCasters)
+add_subdirectory (07_Model)
